@@ -15,16 +15,19 @@ class Game(object):
             place = place.split(' ')
             if 1 <= int(place[0]) <= self.size and 1 <= int(place[1]) <= self.size and self.board[int(place[0])-1][int(place[1])-1] == '-':
                 self.board[int(place[0])-1][int(place[1])-1] = sign
+                if self.check_board():
+                    print(sign + " wins")
+                    self.draw_board()
+                    break
+                if self.is_board_full():
+                    print("Tie")
+                    break
                 if sign == 'O':
                     sign = 'X'
                 else:
                     sign = 'O'
             else:
                 print("Error!")
-            if self.check_board():
-                print("End")
-                self.draw_board()
-                break
 
     def draw_board(self):
         for x in range(self.size):
@@ -70,6 +73,13 @@ class Game(object):
                     if counter >= self.winNumber:
                         return True
         return False
+
+    def is_board_full(self):
+        answer = True
+        for sublist in self.board:
+            if '-' in sublist:
+                answer = False
+        return answer
 
 
 if __name__ == "__main__":
