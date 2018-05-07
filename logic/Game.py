@@ -41,74 +41,74 @@ class Game(object):
     def check_win(self, x, y, sign):
 
         i = x - 1
-        lcounter = 0
-        rcounter = 0
+        left_counter = 0
+        right_counter = 0
         while self.board[i][y] == sign:
-            lcounter = lcounter + 1
+            left_counter = left_counter + 1
             i = i - 1
 
         i = x + 1
         while i < self.size and self.board[i][y] == sign:
-            rcounter = rcounter + 1
+            right_counter = right_counter + 1
             i = i + 1
 
-        counter = lcounter + rcounter + 1
+        counter = left_counter + right_counter + 1
         if counter == self.winNumber:
             return True
 
         j = y - 1
-        upcounter = 0
-        downcounter = 0
+        up_counter = 0
+        down_counter = 0
         while self.board[x][j] == sign:
-            downcounter = downcounter + 1
+            down_counter = down_counter + 1
             j = j - 1
 
         j = y + 1
         while j < self.size and self.board[x][j] == sign:
-            upcounter = upcounter + 1
+            up_counter = up_counter + 1
             j = j + 1
 
-        counter = upcounter + downcounter + 1
+        counter = up_counter + down_counter + 1
         if counter == self.winNumber:
             return True
 
         i = x + 1
         j = y + 1
-        rdowncounter = 0
-        lupcounter = 0
+        right_down_counter = 0
+        left_up_counter = 0
         while i < self.size and j < self.size and self.board[i][j] == sign:
-            rdowncounter = rdowncounter + 1
+            right_down_counter = right_down_counter + 1
             j = j + 1
             i = i + 1
 
         i = x - 1
         j = y - 1
         while j < self.size and self.board[i][j] == sign:
-            lupcounter = lupcounter + 1
+            left_up_counter = left_up_counter + 1
             j = j - 1
             i = i - 1
 
-        counter = lupcounter + rdowncounter + 1
+        counter = left_up_counter + right_down_counter + 1
         if counter == self.winNumber:
             return True
 
         i = x + 1
         j = y - 1
-        rupcounter = 0
-        ldowncounter = 0
+        right_up_counter = 0
+        left_down_counter = 0
         while i < self.size and self.board[i][j] == sign:
-            rupcounter = rupcounter + 1
+            right_up_counter = right_up_counter + 1
             j = j - 1
             i = i + 1
 
         i = x - 1
         j = y + 1
         while j < self.size and self.board[i][j] == sign:
-            ldowncounter = ldowncounter + 1
+            left_down_counter = left_down_counter + 1
             j = j + 1
             i = i - 1
 
-        counter = ldowncounter + rupcounter + 1
+        counter = left_down_counter + right_up_counter + 1
         if counter == self.winNumber:
             return True
 
