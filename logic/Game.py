@@ -1,6 +1,7 @@
 import random
 import numpy as np
 
+
 class Game(object):
 
     def __init__(self):
@@ -15,14 +16,15 @@ class Game(object):
             self.draw_board()
             place = input()
             place = place.split(' ')
-            if 1 <= int(place[0]) <= self.size and 1 <= int(place[1]) <= self.size and self.board[int(place[0])-1][int(place[1])-1] == '-':
-                self.board[int(place[0])-1][int(place[1])-1] = sign
+            if 1 <= int(place[0]) <= self.size and 1 <= int(place[1]) <= self.size and '-' == \
+                    self.board[int(place[0]) - 1][int(place[1]) - 1]:
+                self.board[int(place[0]) - 1][int(place[1]) - 1] = sign
                 counter = counter + 1
-                if self.check_win(int(place[0])-1, int(place[1])-1, sign):
+                if self.check_win(int(place[0]) - 1, int(place[1]) - 1, sign):
                     print(sign + " wins")
                     self.draw_board()
                     break
-                if counter == self.size*self.size:
+                if counter == self.size * self.size:
                     print("Tie")
                     break
                 if sign == 'O':
