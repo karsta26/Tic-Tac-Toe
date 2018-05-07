@@ -7,7 +7,7 @@ class Game(object):
     def __init__(self):
         self.size = 19
         self.winNumber = 5
-        self.board = np.array([['-' for x in range(self.size)] for y in range(self.size)])
+        self.board = np.array([['-' for _ in range(self.size)] for _ in range(self.size)])
 
     def start(self):
         sign = random.choice(['X', 'O'])
