@@ -114,10 +114,10 @@ class Game(object):
         return False
 
     def save_board(self):
-        np.savetxt("logic/board.txt", self.board, fmt='%i')
+        np.savetxt("board.txt", self.board, fmt='%i')
 
     def load_board(self):
-        self.board = np.loadtxt("logic/board.txt", dtype=int)
+        self.board = np.loadtxt("board.txt", dtype=int)
 
     def reset_file_board(self):
         self.board = np.array([[0 for _ in range(self.size)] for _ in range(self.size)], dtype=int)
