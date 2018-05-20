@@ -116,6 +116,16 @@ class Game(object):
 
         return False
 
+    def save_board(self):
+        np.savetxt("board.txt", self.board, fmt='%s')
+
+    def load_board(self):
+        self.board = np.loadtxt("board.txt", dtype=str)
+
+    def reset_file_board(self):
+        self.board = np.array([['-' for _ in range(self.size)] for _ in range(self.size)])
+        self.save_board()
+
 
 if __name__ == "__main__":
     game = Game()
