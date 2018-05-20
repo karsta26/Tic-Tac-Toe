@@ -94,7 +94,7 @@ let Game = {
                     console.log(xhr.responseText);
                     let response = xhr.responseText;
                     let re = /x=([0-9]*)y=([0-9]*)win=([^0-9]*)/g;
-                    let computerMove = re.exec(response)
+                    let computerMove = re.exec(response);
                     console.log(computerMove);
                     let xComputer = computerMove[1];
                     let yComputer = computerMove[2];
