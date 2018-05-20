@@ -10,7 +10,7 @@ let Game = {
     playing: false,
     board: [],
     init: function () {
-        console.log('initializing...');
+        //console.log('initializing...');
         this.myCanvas = document.getElementById('my-canvas');
         this.myCanvas.width = this.canvasSize;
         this.myCanvas.height = this.canvasSize;
@@ -23,7 +23,7 @@ let Game = {
         restartButton.onclick = this.handleForm;
     },
     drawBoard: function () {
-        console.log('drawing board');
+        //console.log('drawing board');
         this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
         this.ctx.strokeStyle = 'black';
         for (let i = 0; i < this.boardSize - 1; ++i) {
@@ -91,25 +91,34 @@ let Game = {
             if (Game.board[x][y] === ' ') {
                 if (Game.userTurn) {                    //only for both players in the browser
                     Game.board[x][y] = Game.userMark;   //
-                    console.log('user move: ' + x + ' ' + y);
+                    //console.log('user move: ' + x + ' ' + y);
                 } else {
                     if (Game.userMark === 'X') {      //
                         Game.board[x][y] = 'O';      //
                     } else {
                         Game.board[x][y] = 'X';
                     }
-                    console.log('computer move: ' + x + ' ' + y);
+                    //console.log('computer move: ' + x + ' ' + y);
                 }                                     //
                 Game.drawMark(x, y);
-                console.log('ok');
+                //console.log('ok');
                 if (Game.userTurn) //only for both players in browser
                     if (Game.checkIfWin(x, y)) {
                         Game.playing = false;
-                        console.log('User won!');
+                        //console.log('User won!');
                         Game.drawWinningLine(x, y);
                     }
                 Game.userTurn = !Game.userTurn; //this should only be uncommented when making both user's and computer's moves in the browser
                 //Game.userTurn = false;
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/?x=' + x + '&y=' + y);
+                xhr.onload = function() {
+                    console.log(xhr.responseText)
+                    if (xhr.status !== 200) {
+                        alert('Request failed.  Returned status of ' + xhr.status);
+                    }
+                };
+                xhr.send();
             } else {
                 console.log('cannot make move');
             }
@@ -152,25 +161,25 @@ let Game = {
     checkIfWin: function (x, y) {
         //vertical line check
         let count = 1 + this.crawl(x, y, 0, 1) + this.crawl(x, y, 0, -1);
-        console.log('vertical: ' + count);
+        //console.log('vertical: ' + count);
         if (count >= this.marksToWin) {
             return true;
         }
         //horizontal
         count = 1 + this.crawl(x, y, 1, 0) + this.crawl(x, y, -1, 0);
-        console.log('horizontal: ' + count);
+        //console.log('horizontal: ' + count);
         if (count >= this.marksToWin) {
             return true;
         }
         //diagonal top-down
         count = 1 + this.crawl(x, y, 1, 1) + this.crawl(x, y, -1, -1);
-        console.log('diagonal t-d: ' + count);
+        //console.log('diagonal t-d: ' + count);
         if (count >= this.marksToWin) {
             return true;
         }
         //diagonal down-top
         count = 1 + this.crawl(x, y, 1, -1) + this.crawl(x, y, -1, 1);
-        console.log('diagonal d-t: ' + count);
+        //console.log('diagonal d-t: ' + count);
 
         return count >= this.marksToWin;
     },

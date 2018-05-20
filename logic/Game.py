@@ -114,10 +114,10 @@ class Game(object):
         return False
 
     def save_board(self):
-        np.savetxt("board.txt", self.board, fmt='%i')
+        np.savetxt("logic/board.txt", self.board, fmt='%i')
 
     def load_board(self):
-        self.board = np.loadtxt("board.txt", dtype=int)
+        self.board = np.loadtxt("logic/board.txt", dtype=int)
 
     def reset_file_board(self):
         self.board = np.array([[0 for _ in range(self.size)] for _ in range(self.size)], dtype=int)
@@ -133,6 +133,7 @@ class Game(object):
             y_enemy = random.randint(0, self.size - 1)
         self.board[x_enemy][y_enemy] = self.change_sign(sign)
         self.save_board()
+        return 'x={}y={}win={}'.format(x_enemy, y_enemy, self.check_win(x_enemy, y_enemy, 2))
 
     def change_sign(self, sign):
         if sign == 1:
