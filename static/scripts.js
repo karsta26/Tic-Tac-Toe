@@ -1,7 +1,6 @@
 let Game = {
-    userTurn: true,
     userMark: 'X',
-    boardSize: 10,
+    boardSize: 19,
     canvasSize: 500,
     lineWidth: 1,
     fieldPadding: 7,
@@ -48,15 +47,6 @@ let Game = {
         } else {
             formValidated = false;
         }
-        let boardSize10 = document.getElementById('board-size-10');
-        let boardSize15 = document.getElementById('board-size-15');
-        if (boardSize10.checked) {
-            Game.boardSize = 10;
-        } else if (boardSize15.checked) {
-            Game.boardSize = 15;
-        } else {
-            formValidated = false;
-        }
         let easy = document.getElementById('easy');
         let medium = document.getElementById('medium');
         let hard = document.getElementById('hard');
@@ -70,7 +60,6 @@ let Game = {
             formValidated = false;
         }
         if (formValidated) {
-            Game.userTurn = true;
             Game.playing = true;
             Game.fieldSize = (Game.canvasSize - Game.lineWidth * (Game.boardSize - 1)) / Game.boardSize;
             Game.board = [];
@@ -81,6 +70,7 @@ let Game = {
                 }
             }
             Game.drawBoard();
+            Game.restartGameOnServer();
         }
     },
     userMove: function (e) {
@@ -89,31 +79,26 @@ let Game = {
             let y = Math.floor(e.offsetY / (Game.fieldSize + Game.lineWidth));
 
             if (Game.board[x][y] === ' ') {
-                if (Game.userTurn) {                    //only for both players in the browser
-                    Game.board[x][y] = Game.userMark;   //
-                    //console.log('user move: ' + x + ' ' + y);
-                } else {
-                    if (Game.userMark === 'X') {      //
-                        Game.board[x][y] = 'O';      //
-                    } else {
-                        Game.board[x][y] = 'X';
-                    }
-                    //console.log('computer move: ' + x + ' ' + y);
-                }                                     //
-                Game.drawMark(x, y);
-                //console.log('ok');
-                if (Game.userTurn) //only for both players in browser
-                    if (Game.checkIfWin(x, y)) {
-                        Game.playing = false;
-                        //console.log('User won!');
-                        Game.drawWinningLine(x, y);
-                    }
-                Game.userTurn = !Game.userTurn; //this should only be uncommented when making both user's and computer's moves in the browser
-                //Game.userTurn = false;
-                var xhr = new XMLHttpRequest();
+                Game.board[x][y] = Game.userMark;
+                //console.log('user move: ' + x + ' ' + y);
+                Game.drawMark(x, y, true);
+                if (Game.checkIfWin(x, y)) {
+                    Game.playing = false;
+                    console.log('User won!');
+                    Game.drawWinningLine(x, y);
+                }
+
+                let xhr = new XMLHttpRequest();
                 xhr.open('POST', '/?x=' + x + '&y=' + y);
                 xhr.onload = function() {
-                    console.log(xhr.responseText)
+                    console.log(xhr.responseText);
+                    let response = xhr.responseText;
+                    let re = /x=([0-9]*)y=([0-9]*)win=([^0-9]*)/g;
+                    let computerMove = re.exec(response)
+                    console.log(computerMove);
+                    let xComputer = computerMove[1];
+                    let yComputer = computerMove[2];
+                    Game.drawMark(xComputer, yComputer, false);
                     if (xhr.status !== 200) {
                         alert('Request failed.  Returned status of ' + xhr.status);
                     }
@@ -124,20 +109,14 @@ let Game = {
             }
         }
     },
-    computerMove: function (x, y, victory) { //this method is to be called when the computer's move is received from the server
-        Game.drawMark(x, y);
-        Game.userTurn = true;
-        if (victory) {
-            alert('Computer won!');
-        }
-    },
-    drawMark: function (x, y) {
-        if (this.userTurn) {
+    drawMark: function (x, y, userTurn) {
+        console.log('enter');
+        if (userTurn) {
             this.ctx.strokeStyle = 'red';
         } else {
             this.ctx.strokeStyle = 'green';
         }
-        if (this.userTurn && this.userMark === 'X' || !this.userTurn && this.userMark === 'O') {
+        if (userTurn && this.userMark === 'X' || !userTurn && this.userMark === 'O') {
             this.ctx.beginPath();
             this.ctx.moveTo(this.fieldPadding + x*(this.fieldSize + this.lineWidth), this.fieldPadding + y*(this.fieldSize + this.lineWidth));
             this.ctx.lineTo(x*(this.fieldSize + this.lineWidth) + this.fieldSize - this.fieldPadding, y*(this.fieldSize + this.lineWidth) + this.fieldSize - this.fieldPadding);
@@ -194,6 +173,16 @@ let Game = {
     },
     drawWinningLine: function () {
         return 0;
+    },
+    restartGameOnServer: function () {
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/?reset=0');
+        xhr.onload = function() {
+            if (xhr.status !== 200) {
+                alert('Request failed.  Returned status of ' + xhr.status);
+                }
+            };
+        xhr.send();
     }
 };
 Game.init();

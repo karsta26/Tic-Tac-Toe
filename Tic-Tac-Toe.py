@@ -14,6 +14,9 @@ def get_index():
         y = request.args.get('y')
         enemy_move = game.make_move(int(x) + 1, int(y) + 1, 1)
         return enemy_move
+    elif request.args.get('reset'):
+        game.reset_file_board()
+        return 'OK'
     else:
         game.reset_file_board()
         return render_template('index.html')
