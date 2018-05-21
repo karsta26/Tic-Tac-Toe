@@ -77,7 +77,6 @@ let Game = {
         if (Game.playing) {
             let x = Math.floor(e.offsetX / (Game.fieldSize + Game.lineWidth));
             let y = Math.floor(e.offsetY / (Game.fieldSize + Game.lineWidth));
-
             if (Game.board[x][y] === ' ') {
                 Game.board[x][y] = Game.userMark;
                 //console.log('user move: ' + x + ' ' + y);
@@ -99,6 +98,7 @@ let Game = {
                     let xComputer = computerMove[1];
                     let yComputer = computerMove[2];
                     Game.drawMark(xComputer, yComputer, false);
+                    Game.board[xComputer][yComputer] = Game.userMark === 'X' ? 'O' : 'X';
                     if (xhr.status !== 200) {
                         alert('Request failed.  Returned status of ' + xhr.status);
                     }
