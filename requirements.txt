@@ -1,3 +1,7 @@
+matplotlib
+keras
+gym
+tensorflow
 Flask==0.12.2
 gunicorn==19.7.1
 numpy==1.14.2
