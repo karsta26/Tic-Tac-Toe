@@ -29,6 +29,8 @@ class Learning(object):
         self.model = Sequential()
         self.model.add(Flatten(input_shape=self.env.observation_space.shape))
         self.model.add(Dense(100, activation='sigmoid'))
+        self.model.add(Dense(100, activation='sigmoid'))
+        self.model.add(Dense(100, activation='sigmoid'))
         self.model.add(Dense(self.env.action_space.n, activation='linear'))
         self.model.compile(loss='mse', optimizer='adam', metrics=['mae'])
         self.model.summary()

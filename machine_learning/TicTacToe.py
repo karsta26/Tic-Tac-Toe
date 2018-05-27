@@ -3,6 +3,7 @@ from gym import spaces
 from gym.utils import seeding
 import numpy as np
 from logic.Game import Game
+from machine_learning.ModelSource import ModelSource
 
 
 class TicTacToe(gym.Env):
@@ -23,17 +24,20 @@ class TicTacToe(gym.Env):
         self.seed()
         self.state = low
 
+        self.model = ModelSource()
+
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def get_action_for_opponent(self, random=True):
+    def get_random_action_for_opponent(self):
         moves = self.game.available_moves()
-        if random:
-            move = np.random.choice(moves)
-            return move
-        else:
-            raise NotImplemented
+        move = np.random.choice(moves)
+        return move
+
+    def get_action_for_opponent(self, x_user, y_user):
+        x_ai, y_ai = self.model.get_ai_move(x_user, y_user)
+        return x_ai * self.size + y_ai
 
     def make_move(self, action, sign):
         x = action // self.size
@@ -60,7 +64,8 @@ class TicTacToe(gym.Env):
             reward = 1.0
             done = True
         else:
-            opponent_action = self.get_action_for_opponent(random=True)
+            opponent_action = self.get_action_for_opponent(x_1, y_1)
+            # opponent_action = self.get_random_action_for_opponent()
             x_2, y_2 = self.make_move(opponent_action, 2)
 
             if self.game.check_win(x_2, y_2, 2):
@@ -79,6 +84,7 @@ class TicTacToe(gym.Env):
         low = np.array([low, low])
 
         self.state = low
+        self.model.reset()
 
         return self.state
 
