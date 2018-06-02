@@ -9,7 +9,6 @@ class Game(object):
         self.board = np.array([[0 for _ in range(self.size)] for _ in range(self.size)], dtype=int)
 
     def check_win(self, x, y, sign):
-
         counter = self.check_one_way(x, y, -1, 0, sign) + self.check_one_way(x, y, 1, 0, sign) + 1
         if counter == self.winNumber:
             return True
@@ -54,3 +53,6 @@ class Game(object):
         if 0 not in self.board:
             return True
         return False
+
+    def count(self, sign):
+        return np.count_nonzero(self.board == sign)
