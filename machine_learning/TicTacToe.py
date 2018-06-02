@@ -4,6 +4,7 @@ from gym.utils import seeding
 import numpy as np
 from logic.Game import Game
 from machine_learning.ModelSource import ModelSource
+from machine_learning.ModelSourceBot import get_move
 
 
 class TicTacToe(gym.Env):
@@ -24,19 +25,29 @@ class TicTacToe(gym.Env):
         self.seed()
         self.state = low
 
+        self.rewards = {'win': 10, 'lost': -10, 'normal': 0, 'advantage': 5, 'tie': 0}
         self.model = ModelSource()
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def get_random_action_for_opponent(self):
+    def get_action_for_opponent(self, x_user, y_user):
+        # return self.get_action_for_opponent_random()
+        return self.get_action_for_opponent_online_bot(x_user, y_user)
+        # return self.get_action_for_opponent_offline_bot()
+
+    def get_action_for_opponent_random(self):
         moves = self.game.available_moves()
         move = np.random.choice(moves)
         return move
 
-    def get_action_for_opponent(self, x_user, y_user):
+    def get_action_for_opponent_online_bot(self, x_user, y_user):
         x_ai, y_ai = self.model.get_ai_move(x_user, y_user)
+        return x_ai * self.size + y_ai
+
+    def get_action_for_opponent_offline_bot(self):
+        x_ai, y_ai = get_move(self.game.board)
         return x_ai * self.size + y_ai
 
     def make_move(self, action, sign):
@@ -55,25 +66,27 @@ class TicTacToe(gym.Env):
     def step(self, action):
         assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
 
-        reward = 0.0
+        reward = self.rewards['normal']
         done = False
 
         x_1, y_1 = self.make_move(action, 1)
 
         if self.game.check_win(x_1, y_1, 1):
-            reward = 1.0
+            reward = self.rewards['win']
             done = True
         else:
             opponent_action = self.get_action_for_opponent(x_1, y_1)
-            # opponent_action = self.get_random_action_for_opponent()
             x_2, y_2 = self.make_move(opponent_action, 2)
 
             if self.game.check_win(x_2, y_2, 2):
-                reward = -1.0
+                reward = self.rewards['lost']
                 done = True
             elif self.game.tie():
-                reward = 0.0
+                reward = self.rewards['tie']
                 done = True
+            elif self.game.count(1) > 5:
+                reward = self.rewards['advantage']
+                done = False
 
         return self.state, reward, done, {}
 

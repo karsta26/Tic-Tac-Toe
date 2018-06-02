@@ -113,6 +113,7 @@ let Game = {
                 xhr.send();
             } else {
                 console.log('cannot make move');
+                Game.hold = false;
             }
         }
     },

@@ -3,6 +3,9 @@ from keras.models import Sequential
 from keras.layers import Dense, Flatten
 from keras.models import load_model
 from machine_learning.TicTacToe import TicTacToe
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 class Learning(object):
@@ -20,10 +23,14 @@ class Learning(object):
             self.model = load_model(path_to_file + self.file_name)
             # without this line model does not work correctly
             self.model.predict(np.expand_dims(self.env.state, axis=0))[0]
-            print('model loaded')
+            logging.info('model loaded')
         except:
-            print('model not found - creating new one')
+            logging.info('model not found - creating new one')
             self.create_new_model()
+
+    def save_model_to_file(self, path_to_file=""):
+        self.model.save(path_to_file + self.file_name)
+        logging.info('model saved to file: {}'.format(path_to_file + self.file_name))
 
     def create_new_model(self):
         self.model = Sequential()
@@ -58,10 +65,10 @@ class Learning(object):
         return action
 
     def start_learning(self, num_episodes=1000):
-        result = {-1: 0, 0: 0, 1: 0}
+        result = {-10: 0, 0: 0, 10: 0}
         for i in range(num_episodes):
             if i % 100 == 0:
-                print("Episode {} of {}".format(i + 1, num_episodes))
+                logging.info("Episode {} of {}".format(i + 1, num_episodes))
             state = self.env.reset()
             self.eps *= self.decay_factor
             done = False
@@ -80,22 +87,23 @@ class Learning(object):
 
                 self.model.fit(np.expand_dims(state, axis=0),
                                target_vec.reshape(-1, self.env.game.size * self.env.game.size),
-                               epochs=1, verbose=0)
+                               epochs=3, verbose=0)
 
                 state = new_state
 
                 if done and num_episodes > 200:
                     result[reward] += 1
 
-        self.model.save(self.file_name)
-
-        print('#' * 10)
-        print('win: {}'.format(result[1]))
-        print('draw: {}'.format(result[0]))
-        print('lost: {}'.format(result[-1]))
+        logging.info('#' * 20)
+        logging.info('win: {}'.format(result[10]))
+        logging.info('draw: {}'.format(result[0]))
+        logging.info('lost: {}'.format(result[-10]))
 
 
 if __name__ == "__main__":
     learn = Learning()
     learn.load_model_from_file()
-    learn.start_learning()
+    try:
+        learn.start_learning(num_episodes=1000)
+    finally:
+        learn.save_model_to_file()
