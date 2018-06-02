@@ -7,6 +7,7 @@ let Game = {
     marksToWin: 5,
     difficultyLevel: 'easy',
     playing: false,
+    hold: false,
     board: [],
     init: function () {
         //console.log('initializing...');
@@ -74,7 +75,8 @@ let Game = {
         }
     },
     userMove: function (e) {
-        if (Game.playing) {
+        if (Game.playing && !Game.hold) {
+            Game.hold = true;
             let x = Math.floor(e.offsetX / (Game.fieldSize + Game.lineWidth));
             let y = Math.floor(e.offsetY / (Game.fieldSize + Game.lineWidth));
             if (Game.board[x][y] === ' ') {
@@ -83,7 +85,7 @@ let Game = {
                 Game.drawMark(x, y, true);
                 if (Game.checkIfWin(x, y)) {
                     Game.playing = false;
-                    console.log('User won!');
+                    alert('User won!');
                     Game.drawWinningLine(x, y);
                 }
 
@@ -99,6 +101,11 @@ let Game = {
                     let yComputer = computerMove[2];
                     Game.drawMark(xComputer, yComputer, false);
                     Game.board[xComputer][yComputer] = Game.userMark === 'X' ? 'O' : 'X';
+                    if (computerMove[3] === 'True') {
+                        Game.playing = false;
+                        alert('Computer won!');
+                    }
+                    Game.hold = false;
                     if (xhr.status !== 200) {
                         alert('Request failed.  Returned status of ' + xhr.status);
                     }
