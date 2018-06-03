@@ -4,8 +4,10 @@ from keras.layers import Dense, Flatten
 from keras.models import load_model
 from machine_learning.TicTacToe import TicTacToe
 import logging
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("requests").setLevel(logging.WARNING)
 
 
 class Learning(object):
@@ -68,7 +70,7 @@ class Learning(object):
         result = {-10: 0, 0: 0, 10: 0}
         for i in range(num_episodes):
             if i % 100 == 0:
-                logging.info("Episode {} of {}".format(i + 1, num_episodes))
+                logging.info("{} Episode {} of {}".format(str(datetime.now()), i + 1, num_episodes))
             state = self.env.reset()
             self.eps *= self.decay_factor
             done = False

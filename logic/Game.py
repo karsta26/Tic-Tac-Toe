@@ -9,33 +9,80 @@ class Game(object):
         self.board = np.array([[0 for _ in range(self.size)] for _ in range(self.size)], dtype=int)
 
     def check_win(self, x, y, sign):
-        counter = self.check_one_way(x, y, -1, 0, sign) + self.check_one_way(x, y, 1, 0, sign) + 1
+
+        i = x - 1
+        left_counter = 0
+        right_counter = 0
+        while i >= 0 and self.board[i][y] == sign:
+            left_counter = left_counter + 1
+            i = i - 1
+
+        i = x + 1
+        while i < self.size and self.board[i][y] == sign:
+            right_counter = right_counter + 1
+            i = i + 1
+
+        counter = left_counter + right_counter + 1
         if counter == self.winNumber:
             return True
 
-        counter = self.check_one_way(x, y, 0, -1, sign) + self.check_one_way(x, y, 0, 1, sign) + 1
+        j = y - 1
+        up_counter = 0
+        down_counter = 0
+        while j >= 0 and self.board[x][j] == sign:
+            down_counter = down_counter + 1
+            j = j - 1
+
+        j = y + 1
+        while j < self.size and self.board[x][j] == sign:
+            up_counter = up_counter + 1
+            j = j + 1
+
+        counter = up_counter + down_counter + 1
         if counter == self.winNumber:
             return True
 
-        counter = self.check_one_way(x, y, 1, 1, sign) + self.check_one_way(x, y, -1, -1, sign) + 1
+        i = x + 1
+        j = y + 1
+        right_down_counter = 0
+        left_up_counter = 0
+        while i < self.size and j < self.size and self.board[i][j] == sign:
+            right_down_counter = right_down_counter + 1
+            j = j + 1
+            i = i + 1
+
+        i = x - 1
+        j = y - 1
+        while i >= 0 and j >= 0 and self.board[i][j] == sign:
+            left_up_counter = left_up_counter + 1
+            j = j - 1
+            i = i - 1
+
+        counter = left_up_counter + right_down_counter + 1
         if counter == self.winNumber:
             return True
 
-        counter = self.check_one_way(x, y, 1, -1, sign) + self.check_one_way(x, y, -1, 1, sign) + 1
+        i = x + 1
+        j = y - 1
+        right_up_counter = 0
+        left_down_counter = 0
+        while j >= 0 and i < self.size and self.board[i][j] == sign:
+            right_up_counter = right_up_counter + 1
+            j = j - 1
+            i = i + 1
+
+        i = x - 1
+        j = y + 1
+        while i >= 0 and j < self.size and self.board[i][j] == sign:
+            left_down_counter = left_down_counter + 1
+            j = j + 1
+            i = i - 1
+
+        counter = left_down_counter + right_up_counter + 1
         if counter == self.winNumber:
             return True
 
         return False
-
-    def check_one_way(self, x, y, x_direction, y_direction, sign):
-        counter = 0
-        i = x + x_direction
-        j = y + y_direction
-        while i >= 0 and j >= 0 and i < self.size and j < self.size and self.board[i][j] == sign:
-            counter = counter + 1
-            j = j + x_direction
-            i = i + y_direction
-        return counter
 
     def change_sign(self, sign):
         if sign == 1:
