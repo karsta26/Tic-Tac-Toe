@@ -84,7 +84,7 @@ class TicTacToe(gym.Env):
             elif self.game.tie():
                 reward = self.rewards['tie']
                 done = True
-            elif self.game.count(1) > 5:
+            elif self.game.count(1) >= 5:
                 reward = self.rewards['advantage']
                 done = False
 
