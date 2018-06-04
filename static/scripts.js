@@ -5,12 +5,10 @@ let Game = {
     lineWidth: 1,
     fieldPadding: 7,
     marksToWin: 5,
-    difficultyLevel: 'easy',
     playing: false,
     hold: false,
     board: [],
     init: function () {
-        //console.log('initializing...');
         this.myCanvas = document.getElementById('my-canvas');
         this.myCanvas.width = this.canvasSize;
         this.myCanvas.height = this.canvasSize;
@@ -23,7 +21,6 @@ let Game = {
         restartButton.onclick = this.handleForm;
     },
     drawBoard: function () {
-        //console.log('drawing board');
         this.ctx.clearRect(0, 0, this.canvasSize, this.canvasSize);
         this.ctx.strokeStyle = 'black';
         for (let i = 0; i < this.boardSize - 1; ++i) {
@@ -48,18 +45,7 @@ let Game = {
         } else {
             formValidated = false;
         }
-        let easy = document.getElementById('easy');
-        let medium = document.getElementById('medium');
-        let hard = document.getElementById('hard');
-        if (easy.checked) {
-            Game.difficultyLevel = 'easy';
-        } else if (medium.checked) {
-            Game.difficultyLevel = 'medium';
-        } else if (hard.checked) {
-            Game.difficultyLevel = 'hard';
-        } else {
-            formValidated = false;
-        }
+
         if (formValidated) {
             Game.playing = true;
             Game.fieldSize = (Game.canvasSize - Game.lineWidth * (Game.boardSize - 1)) / Game.boardSize;
@@ -81,12 +67,10 @@ let Game = {
             let y = Math.floor(e.offsetY / (Game.fieldSize + Game.lineWidth));
             if (Game.board[x][y] === ' ') {
                 Game.board[x][y] = Game.userMark;
-                //console.log('user move: ' + x + ' ' + y);
                 Game.drawMark(x, y, true);
                 if (Game.checkIfWin(x, y)) {
                     Game.playing = false;
                     alert('User won!');
-                    Game.drawWinningLine(x, y);
                 }
 
                 let xhr = new XMLHttpRequest();
@@ -148,25 +132,21 @@ let Game = {
     checkIfWin: function (x, y) {
         //vertical line check
         let count = 1 + this.crawl(x, y, 0, 1) + this.crawl(x, y, 0, -1);
-        //console.log('vertical: ' + count);
         if (count >= this.marksToWin) {
             return true;
         }
         //horizontal
         count = 1 + this.crawl(x, y, 1, 0) + this.crawl(x, y, -1, 0);
-        //console.log('horizontal: ' + count);
         if (count >= this.marksToWin) {
             return true;
         }
         //diagonal top-down
         count = 1 + this.crawl(x, y, 1, 1) + this.crawl(x, y, -1, -1);
-        //console.log('diagonal t-d: ' + count);
         if (count >= this.marksToWin) {
             return true;
         }
         //diagonal down-top
         count = 1 + this.crawl(x, y, 1, -1) + this.crawl(x, y, -1, 1);
-        //console.log('diagonal d-t: ' + count);
 
         return count >= this.marksToWin;
     },
@@ -178,9 +158,6 @@ let Game = {
         } else {
             return 0;
         }
-    },
-    drawWinningLine: function () {
-        return 0;
     },
     restartGameOnServer: function () {
         let xhr = new XMLHttpRequest();
