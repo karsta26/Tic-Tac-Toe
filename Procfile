@@ -1,1 +1,1 @@
-web: gunicorn Tic-Tac-Toe:app
+web: gunicorn --workers 1 Tic-Tac-Toe:app
